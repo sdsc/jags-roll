@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone="no"?>
+
+<graph>
+
+<description>
+jags
+Just Another Gibbs Sampler
+http://sourceforge.net/projects/mcmc-jags/?_test=b
+</description>
+
+<copyright>
+Copyright (c) 2000 - 2011 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
+
+<changelog>
+</changelog>
+
+<edge from="base">
+  <to>jags-common</to>
+</edge>
+<order head="base">
+  <tail>jags-common</tail>
+</order>
+
+<edge from="envmodules-common">
+  <to>jags-modules-common</to>
+</edge>
+<order head="envmodules-common">
+  <tail>jags-modules-common</tail>
+</order>
+
+<order head="jags-common">
+  <tail>jags-modules-common</tail>
+</order>
+
+</graph>
