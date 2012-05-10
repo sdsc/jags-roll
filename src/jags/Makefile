@@ -61,20 +61,26 @@ REDHAT.ROOT = $(PWD)/../../
 -include $(ROCKSROOT)/etc/Rules.mk
 
 build:
+	mkdir -p $(PKGROOT)
+	mkdir -p $(ROOT)/$(PKGROOT)
 	tar zxvf $(SOURCE).tar.gz
 	( \
+          mount --bind $($ROOT)/$(PKGROOT)  $(PKGROOT); \
 	  cd $(SOURCE); \
           export LD_PRELOAD=/opt/lapack/gnu/lib/libblas.so;/opt/lapack/gnu/lib/liblapack.so; \
           export LDFLAGS=-L/opt/lapack/gnu/lib; \
-	  ./configure --prefix=$(ROOT)/$(PKGROOT)  --with-blas=-lblas --with-lapack=-llapack; \
+	  ./configure --prefix=$(PKGROOT)  --with-blas=-lblas --with-lapack=-llapack; \
           make; \
+          umount $(PKGROOT); \
 	)
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	( \
+           mount --bind $($ROOT)/$(PKGROOT)  $(PKGROOT); \
            cd $(SOURCE); \
            make install; \
+           umount $(PKGROOT); \
         )
 clean::
 	rm -rf $(SOURCE)
