@@ -65,7 +65,7 @@ build:
 	mkdir -p $(ROOT)/$(PKGROOT)
 	tar zxvf $(SOURCE).tar.gz
 	( \
-          mount --bind $($ROOT)/$(PKGROOT)  $(PKGROOT); \
+          mount --bind $(ROOT)/$(PKGROOT)  $(PKGROOT); \
 	  cd $(SOURCE); \
           export LD_PRELOAD=/opt/lapack/gnu/lib/libblas.so:/opt/lapack/gnu/lib/liblapack.so; \
           export LDFLAGS=-L/opt/lapack/gnu/lib; \
@@ -77,7 +77,7 @@ build:
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	( \
-           mount --bind $($ROOT)/$(PKGROOT)  $(PKGROOT); \
+           mount --bind $(ROOT)/$(PKGROOT)  $(PKGROOT); \
            cd $(SOURCE); \
            make install; \
            umount $(PKGROOT); \
