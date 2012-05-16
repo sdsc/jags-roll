@@ -67,7 +67,7 @@ build:
 	( \
           mount --bind $($ROOT)/$(PKGROOT)  $(PKGROOT); \
 	  cd $(SOURCE); \
-          export LD_PRELOAD=/opt/lapack/gnu/lib/libblas.so;/opt/lapack/gnu/lib/liblapack.so; \
+          export LD_PRELOAD=/opt/lapack/gnu/lib/libblas.so:/opt/lapack/gnu/lib/liblapack.so; \
           export LDFLAGS=-L/opt/lapack/gnu/lib; \
 	  ./configure --prefix=$(PKGROOT)  --with-blas=-lblas --with-lapack=-llapack; \
           make; \
