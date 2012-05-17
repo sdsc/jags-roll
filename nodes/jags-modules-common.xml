@@ -44,7 +44,7 @@ if test -f /etc/profile.d/jags.sh; then
 <file name="/opt/modulefiles/applications/jags/3.2.0" perms="0644">
 #%Module1.0
 prepend-path PATH /opt/jags/bin
-prepend-path LD_LIBRARY_PATH /opt/lapack/gnu/lib
+prepend-path LD_LIBRARY_PATH /opt/lapack/gnu/lib:/opt/jags/lib
 </file>
 
 <file name="/opt/modulefiles/applications/jags/.version.3.2.0">
