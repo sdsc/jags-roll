@@ -5,7 +5,7 @@
 <description>
 jags
 Just Another Gibbs Sampler
-http://sourceforge.net/projects/mcmc-jags/?_test=b
+http://sourceforge.net/projects/mcmc-jags
 </description>
 
 <copyright>
@@ -17,20 +17,6 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </changelog>
 
 <package>jags</package>
-
-<post>
-
-<file name="/etc/profile.d/jags.csh" perms="0755" >
-set path = ( /opt/jags/bin $path )
-setenv LD_LIBRARY_PATH /opt/lapack/gnu/lib:$LD_LIBRARY_PATH
-</file>
-
-<file name="/etc/profile.d/jags.sh" perms="0755" >
-export PATH=/opt/jags/bin:$PATH
-export LD_LIBRARY_PATH=/opt/lapack/gnu/lib:$LD_LIBRARY_PATH
-</file>
-
-
-</post>
+<package>jags-modules</package>
 
 </kickstart>

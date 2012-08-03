@@ -5,7 +5,7 @@
 <description>
 jags
 Just Another Gibbs Sampler
-http://sourceforge.net/projects/mcmc-jags/?_test=b
+http://sourceforge.net/projects/mcmc-jags
 </description>
 
 <copyright>
@@ -21,17 +21,6 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </edge>
 <order head="base">
   <tail>jags-common</tail>
-</order>
-
-<edge from="envmodules-common">
-  <to>jags-modules-common</to>
-</edge>
-<order head="envmodules-common">
-  <tail>jags-modules-common</tail>
-</order>
-
-<order head="jags-common">
-  <tail>jags-modules-common</tail>
 </order>
 
 </graph>
