@@ -3,9 +3,8 @@
 <kickstart>
 
 <description>
-jags
-Just Another Gibbs Sampler
-http://sourceforge.net/projects/mcmc-jags
+jags Just Another Gibbs Sampler
+http://mcmc-jags.sourceforge.net
 </description>
 
 <copyright>
