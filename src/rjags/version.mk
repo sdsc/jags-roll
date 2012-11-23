@@ -1,0 +1,3 @@
+NAME = rjags
+VERSION = 1
+RELEASE = 1

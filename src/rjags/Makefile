@@ -2,9 +2,9 @@
 #
 # @Copyright@
 # 
-# 				Rocks(tm)
+# 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		        version 4.3 (Mars Hill)
+# 		           version 5.1  (VI)
 # 
 # Copyright (c) 2000 - 2011 The Regents of the University of California.
 # All rights reserved.	
@@ -24,7 +24,7 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(tm)
+# 	"This product includes software developed by the Rocks(r)
 # 	Cluster Group at the San Diego Supercomputer Center at the
 # 	University of California, San Diego and its contributors."
 # 
@@ -54,8 +54,24 @@
 # @Copyright@
 #
 
-SRCDIRS = `find . -maxdepth 1 -type d \
-	-not -name build-\* \
-	-not -name rjags \
-	-not -name CVS \
-	-not -name .` rjags
+REDHAT.ROOT = $(PWD)/../../
+PKGROOT=/opt/R
+
+-include $(ROCKSROOT)/etc/Rules.mk
+
+build:
+
+install::
+	mkdir -p $(ROOT)/$(PKGROOT)/local/lib
+	mkdir -p $(PKGROOT)/local/lib
+	( \
+	  module load gnu lapack; \
+	  export JAGS_INCLUDE=$(REDHAT.ROOT)/src/build-jags/include/JAGS; \
+	  export JAGS_LIB=$(REDHAT.ROOT)/src/build-jags/lib; \
+	  export LD_LIBRARY_PATH=$${JAGS_LIB}:$${LD_LIBRARY_PATH}; \
+	  bash install_packages.sh $(PKGROOT) \
+	)
+	mv $(PKGROOT)/local/lib/* $(ROOT)/$(PKGROOT)/local/lib
+	-rmdir -p $(PKGROOT)/local/lib
+
+clean::
