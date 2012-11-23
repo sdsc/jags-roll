@@ -61,29 +61,31 @@ REDHAT.ROOT = $(PWD)/../../
 -include $(ROCKSROOT)/etc/Rules.mk
 
 build:
-	mkdir -p $(PKGROOT)
-	mkdir -p $(ROOT)/$(PKGROOT)
 	tar zxvf $(SOURCE).tar.gz
 	( \
-          mount --bind $(ROOT)/$(PKGROOT)  $(PKGROOT); \
 	  cd $(SOURCE); \
-          export LD_PRELOAD=/opt/lapack/gnu/lib/libblas.so:/opt/lapack/gnu/lib/liblapack.so; \
-          export LDFLAGS=-L/opt/lapack/gnu/lib; \
-	  ./configure --prefix=$(PKGROOT)  --with-blas=-lblas --with-lapack=-llapack; \
-          make; \
-          umount $(PKGROOT); \
+	  module load gnu lapack; \
+	  export LD_PRELOAD=$${LAPACKHOME}/lib/libblas.so:$${LAPACKHOME}/lib/liblapack.so; \
+	  export LDFLAGS=-L$${LAPACKHOME}/lib; \
+	  ./configure --prefix=$(PKGROOT) \
+	              --with-blas=-lblas --with-lapack=-llapack; \
+	  make \
 	)
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	mkdir -p -m 755 $(PKGROOT)
+	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
-           mount --bind $(ROOT)/$(PKGROOT)  $(PKGROOT); \
-           cd $(SOURCE); \
-           make install; \
-           umount $(PKGROOT); \
-        )
+	  cd $(SOURCE); \
+	  make install \
+	)
+	umount $(PKGROOT)
+	-rmdir -p $(PKGROOT)
 	tar zxvf classic-bugs.tar.gz
 	mv classic-bugs $(ROOT)/$(PKGROOT)/examples
+	mkdir -p $(REDHAT.ROOT)/src/build-$(NAME)
+	/bin/cp -r $(ROOT)/$(PKGROOT)/* $(REDHAT.ROOT)/src/build-$(NAME)
 
 clean::
 	rm -rf $(SOURCE)
