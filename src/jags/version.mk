@@ -1,3 +1,3 @@
 NAME    = jags
-VERSION = 3.2.0
-RELEASE = 4
+VERSION = 3.3.0
+RELEASE = 0
