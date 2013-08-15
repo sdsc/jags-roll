@@ -71,7 +71,7 @@ install::
 	  export LD_LIBRARY_PATH=$${JAGS_LIB}:$${LD_LIBRARY_PATH}; \
 	  bash install_packages.sh $(PKGROOT) \
 	)
-	mv $(PKGROOT)/local/lib/* $(ROOT)/$(PKGROOT)/local/lib
+	cp -r  $(PKGROOT)/local/lib/rjags/* $(ROOT)/$(PKGROOT)/local/lib/rjags
 	-rmdir -p $(PKGROOT)/local/lib
 
 clean::
