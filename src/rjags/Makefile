@@ -62,7 +62,7 @@ PKGROOT=/opt/R
 build:
 
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)/local/lib
+	mkdir -p $(ROOT)/$(PKGROOT)/local/lib/rjags
 	mkdir -p $(PKGROOT)/local/lib
 	( \
 	  module load gnu lapack; \
