@@ -1,45 +1,45 @@
-#
 # $Id$
 #
 # @Copyright@
-#
-# 				Rocks(tm)
+# 
+# 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		        version 4.3 (Mars Hill)
-#
-# Copyright (c) 2000 - 2011 The Regents of the University of California.
-# All rights reserved.
-#
+# 		         version 5.6 (Emerald Boa)
+# 		         version 6.1 (Emerald Boa)
+# 
+# Copyright (c) 2000 - 2013 The Regents of the University of California.
+# All rights reserved.	
+# 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-#
+# 
 # 1. Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#
+# 
 # 2. Redistributions in binary form must reproduce the above copyright
 # notice unmodified and in its entirety, this list of conditions and the
-# following disclaimer in the documentation and/or other materials provided
+# following disclaimer in the documentation and/or other materials provided 
 # with the distribution.
-#
+# 
 # 3. All advertising and press materials, printed or electronic, mentioning
-# features or use of this software must display the following acknowledgement:
-#
-# 	"This product includes software developed by the Rocks(tm)
+# features or use of this software must display the following acknowledgement: 
+# 
+# 	"This product includes software developed by the Rocks(r)
 # 	Cluster Group at the San Diego Supercomputer Center at the
 # 	University of California, San Diego and its contributors."
-#
+# 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
 # authors may be used to endorse or promote products derived from this
 # software without specific prior written permission.  The name of the
 # software includes the following terms, and any derivatives thereof:
-# "Rocks", "Rocks Clusters", and "Avalanche Installer".  For licensing of
-# the associated name, interested parties should contact Technology
-# Transfer & Intellectual Property Services, University of California,
-# San Diego, 9500 Gilman Drive, Mail Code 0910, La Jolla, CA 92093-0910,
+# "Rocks", "Rocks Clusters", and "Avalanche Installer".  For licensing of 
+# the associated name, interested parties should contact Technology 
+# Transfer & Intellectual Property Services, University of California, 
+# San Diego, 9500 Gilman Drive, Mail Code 0910, La Jolla, CA 92093-0910, 
 # Ph: (858) 534-5815, FAX: (858) 534-7345, E-MAIL:invent@ucsd.edu
-#
+# 
 # THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 # THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -51,41 +51,44 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# 
 # @Copyright@
+#
+# $Log$
 
-PKGROOT = /opt/$(NAME)
-SOURCE = $(NAME)-$(VERSION)
-REDHAT.ROOT = $(PWD)/../../
+REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
+include Rules.mk
+include pull.mk
 
-build:
-	tar zxvf $(SOURCE).tar.gz
+build: $(SRC_DIRS)
 	( \
-	  cd $(SOURCE); \
+	  cd $(SOURCE_DIR); \
 	  module load gnu lapack; \
 	  export LD_PRELOAD=$${LAPACKHOME}/lib/libblas.so:$${LAPACKHOME}/lib/liblapack.so; \
 	  export LDFLAGS=-L$${LAPACKHOME}/lib; \
 	  ./configure --prefix=$(PKGROOT) \
-	              --with-blas=-lblas --with-lapack=-llapack; \
-	  make \
+		      --with-blas=-lblas --with-lapack=-llapack; \
+	  $(MAKE); \
 	)
-
+	@echo "::: Package $(NAME) build complete :::"
+	
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	mkdir -p -m 755 $(PKGROOT)
 	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
-	  cd $(SOURCE); \
-	  make install \
+	  cd $(SOURCE_DIR); \
+	  $(MAKE) install; \
 	)
 	umount $(PKGROOT)
 	-rmdir -p $(PKGROOT)
-	tar zxvf classic-bugs.tar.gz
-	mv classic-bugs $(ROOT)/$(PKGROOT)/examples
+	mv $(CLASSIC_BUGS_SOURCE_DIR) $(ROOT)/$(PKGROOT)/examples
 	mkdir -p $(REDHAT.ROOT)/src/build-$(NAME)
 	/bin/cp -r $(ROOT)/$(PKGROOT)/* $(REDHAT.ROOT)/src/build-$(NAME)
+	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE)
+	rm -rf $(SRC_DIRS)
+
