@@ -1,7 +1,8 @@
 NAME               = jags
 VERSION            = 3.3.0
-RELEASE            = 1
+RELEASE            = 0
 PKGROOT            = /opt/jags
+RPM.EXTRAS         = AutoReq:No
 
 SRC_SUBDIR         = jags
 
