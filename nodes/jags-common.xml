@@ -18,6 +18,5 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>jags</package>
 <package>jags-modules</package>
 <package>jags-roll-test</package>
-<package>rjags</package>
 
 </kickstart>

@@ -29,18 +29,6 @@ cat CODA*
 END
 close(OUT);
 
-open(OUT, ">$TESTFILE.R.sh");
-print OUT <<END;
-#!/bin/bash
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load gnu lapack jags ROLLMPI_ROLLNETWORK R
-fi
-echo 'library()' | R --vanilla
-END
-close(OUT);
-
-# abyss-common.xml
 # jags-common.xml
 if($appliance =~ /$installedOnAppliancesPattern/) {
   ok($isInstalled, 'jags installed');
@@ -58,8 +46,6 @@ SKIP: {
        -f "$TESTFILE.dir/CODAchain2.txt" &&
        -f "$TESTFILE.dir/CODAindex.txt", 'jags output files created');
     like($output, qr/theta\[2\] 5001 10000/, 'jags test run');
-    $output = `/bin/bash $TESTFILE.R.sh 2>&1`;
-    like($output, qr/rjags/, 'rjags module installed');
   }
 
   skip 'modules not installed', 3 if ! -f '/etc/profile.d/modules.sh';

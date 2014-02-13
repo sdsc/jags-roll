@@ -85,8 +85,6 @@ install::
 	umount $(PKGROOT)
 	-rmdir -p $(PKGROOT)
 	mv $(CLASSIC_BUGS_SOURCE_DIR) $(ROOT)/$(PKGROOT)/examples
-	mkdir -p $(REDHAT.ROOT)/src/build-$(NAME)
-	/bin/cp -r $(ROOT)/$(PKGROOT)/* $(REDHAT.ROOT)/src/build-$(NAME)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

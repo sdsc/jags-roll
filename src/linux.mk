@@ -56,6 +56,5 @@
 
 SRCDIRS = `find . -maxdepth 1 -type d \
 	-not -name build-\* \
-	-not -name rjags \
 	-not -name CVS \
-	-not -name .` rjags
+	-not -name .`
