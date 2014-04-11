@@ -1,4 +1,4 @@
-NAME    = jags-modules
-VERSION = 3.3.0
+NAME    	= jags-modules
+VERSION 	= 1.0
 RELEASE = 0
-RPM.EXTRAS         = AutoReq:No
+RPM.EXTRAS = "AutoReq: no"

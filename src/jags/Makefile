@@ -77,14 +77,19 @@ build: $(SRC_DIRS)
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	mkdir -p -m 755 $(PKGROOT)
+	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags
+	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags-modules
 	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
 	  cd $(SOURCE_DIR); \
 	  $(MAKE) install; \
 	)
 	umount $(PKGROOT)
+	cp -r $(ROOT)/$(PKGROOT)/* $(REDHAT.ROOT)/src/build-jags
 	-rmdir -p $(PKGROOT)
 	mv $(CLASSIC_BUGS_SOURCE_DIR) $(ROOT)/$(PKGROOT)/examples
+	cat jags.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/jags!g;s!VERSION!$(VERSION)!g" \
+         > $(REDHAT.ROOT)/src/build-jags-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

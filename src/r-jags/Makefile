@@ -2,11 +2,12 @@
 #
 # @Copyright@
 # 
-# 				Rocks(tm)
+# 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		        version 4.3 (Mars Hill)
+# 		         version 5.6 (Emerald Boa)
+# 		         version 6.1 (Emerald Boa)
 # 
-# Copyright (c) 2000 - 2011 The Regents of the University of California.
+# Copyright (c) 2000 - 2013 The Regents of the University of California.
 # All rights reserved.	
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,7 +25,7 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(tm)
+# 	"This product includes software developed by the Rocks(r)
 # 	Cluster Group at the San Diego Supercomputer Center at the
 # 	University of California, San Diego and its contributors."
 # 
@@ -53,11 +54,27 @@
 # 
 # @Copyright@
 #
+# $Log$
 
-SRCDIRS = `find . -maxdepth 1 -type d \
-	-not -name build-\* \
-	-not -name CVS \
-	-not -name jags-modules \
-	-not -name r-jags \
-        -not -name build-\* \
-	-not -name .` r-jags jags-modules
+REDHAT.ROOT = $(CURDIR)/../../
+
+-include $(ROCKSROOT)/etc/Rules.mk
+include Rules.mk
+include pull.mk
+
+build: $(SRC_DIRS)
+	@echo $(TAR_GZ_PKGS)
+	@echo "::: Package $(NAME) build complete :::"
+	
+install::
+	mkdir -p $(ROOT)/$(PKGROOT)/local/lib
+	mkdir -p $(PKGROOT)/local/lib
+	if test -r install_packages.sh; then \
+	  export DISPLAY=`cat /tmp/.display`; \
+	  bash install_packages.sh $(REDHAT.ROOT)/src/build-jags $(RJAGS_VERSION); \
+	fi
+	rm -rf  $(PKGROOT)/local/lib/00LOCK*
+	mv $(PKGROOT)/local/lib/rjags $(ROOT)/$(PKGROOT)/local/lib
+	@echo "::: Package $(NAME) install complete :::"
+
+clean::

@@ -1,4 +1,0 @@
-#%Module1.0
-setenv JAGSHOME /opt/jags
-prepend-path PATH /opt/jags/bin
-prepend-path LD_LIBRARY_PATH /opt/lapack/gnu/lib:/opt/jags/lib

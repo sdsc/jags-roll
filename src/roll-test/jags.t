@@ -57,5 +57,23 @@ SKIP: {
      'jags version module link created');
 
 }
+SKIP: {
+  my @RMODULES = (
+  'rjags'
+  );
+  skip 'R not installed', int(@RMODULES) + 1 if ! -d '/opt/R';
+  $ENV{'R_LIBS'} = '/opt/R/local/lib';
+  ok(-d $ENV{'R_LIBS'}, 'R library created');
+  open(OUTPUT, ">$TESTFILE.sh");
+  print OUTPUT <<END;
+. /etc/profile.d/modules.sh
+module load R
+echo 'library()' | R --vanilla
+END
+  $output = `/bin/bash $TESTFILE.sh 2>&1`;
+  foreach my $module(@RMODULES) {
+    ok($output =~ /$module/, "$module R module installed");
+  }
+}
 
 `rm -fr $TESTFILE*`;
