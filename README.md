@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roll bundles the JAGS Bayesian model analyzer.
+This roll bundles the JAGS Bayesian model analyzer as well as the corresponding R library.
 
 For more information about the various packages included in the JAGS roll please
 visit the official web page:
@@ -22,8 +22,10 @@ Rocks development machine.
 
 
 ## Dependencies
+the jags library require lapack
 
-Unknown at this time.
+the r-jags package requires that the R and r-modules rolls already be installed
+
 
 
 ## Building
