@@ -22,11 +22,13 @@ Rocks development machine.
 
 
 ## Dependencies
-the jags library require lapack
 
-the r-jags package requires that the R and r-modules rolls already be installed
+jags requires the lapack library; specificially, it expects the LAPACKHOME
+environment variable to be set.  If possible, the build process loads the
+"gnu" and "lapack" environment modules to satisfy this dependency.
 
-
+Similarly, the r-jags package requires R and will load the "R" environment
+module if possible to fullfill this dependency.
 
 ## Building
 
@@ -43,7 +45,6 @@ created as... `jags-*.iso`. If you built the roll on a Rocks frontend then
 proceed to the installation step. If you built the roll on a Rocks development
 appliance you need to copy the roll to your Rocks frontend before continuing
 with installation.
-
 
 ## Installation
 
@@ -73,10 +74,4 @@ run the test scripts execute the following command(s):
 
 ```shell
 % /root/rolltests/jags.t 
-ok 1 - jags is installed
-ok 2 - jags test run
-ok 3 - jags module installed
-ok 4 - jags version module installed
-ok 5 - jags version module link created
-1..5
 ```
