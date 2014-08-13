@@ -1,10 +1,18 @@
 # installation script for R packages; pass installation root and openmpi root
 # as arguments.
 
-BUILD_PATH=$1
-RJAGS_VERSION=$2
-. /etc/profile.d/modules.sh
-module load gnu
-module load lapack
-export LD_LIBRARY_PATH=${BUILD_PATH}/lib:${LD_LIBRARY_PATH}
-/opt/R/bin/R CMD INSTALL --configure-args="--with-jags-lib=${BUILD_PATH}/lib --with-jags-include=${BUILD_PATH}/include/JAGS" rjags_${RJAGS_VERSION}.tar.gz -l /opt/R/local/lib 
+PKGROOT=${1:-/opt/R}
+CRANURL=http://cran.stat.ucla.edu
+
+if test -e /etc/profile.d/modules.sh; then
+  . /etc/profile.d/modules.sh
+  module load gnu lapack R
+fi
+
+R --vanilla << END
+# Specify where to pull package source from
+repos <- getOption("repos")
+repos["CRAN"] = "${CRANURL}"
+options(repos = repos)
+install.packages('rjags', lib="${PKGROOT}")
+END

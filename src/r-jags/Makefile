@@ -67,14 +67,10 @@ build: $(SRC_DIRS)
 	@echo "::: Package $(NAME) build complete :::"
 	
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)/local/lib
-	mkdir -p $(PKGROOT)/local/lib
+	mkdir -p $(ROOT)/$(PKGROOT)
 	if test -r install_packages.sh; then \
-	  export DISPLAY=`cat /tmp/.display`; \
-	  bash install_packages.sh $(REDHAT.ROOT)/src/build-jags $(RJAGS_VERSION); \
+	  bash install_packages.sh $(ROOT)/$(PKGROOT); \
 	fi
-	rm -rf  $(PKGROOT)/local/lib/00LOCK*
-	mv $(PKGROOT)/local/lib/rjags $(ROOT)/$(PKGROOT)/local/lib
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
