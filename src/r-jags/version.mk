@@ -1,5 +1,5 @@
 NAME               = r-jags
-RELEASE            = 3
+RELEASE            = 4
 PKGROOT            = /opt/R/local/lib
 
 SRC_SUBDIR         = r-jags

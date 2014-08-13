@@ -62,15 +62,39 @@ REDHAT.ROOT = $(CURDIR)/../../
 include Rules.mk
 include pull.mk
 
+ROLLCOMPILER = gnu
+COMPILERNAME = gnu
+
+CC = gcc
+ifeq ("$(COMPILERNAME)", "intel")
+  CC = icc
+else ifeq ("$(COMPILERNAME)", "pgi")
+  CC = pgcc
+endif
+
+COMPILERSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load $(ROLLCOMPILER) || true; \
+    module load R || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(CC) --version; \
+  echo === R HOME ===; \
+  echo $${RHOME}
+
 build: $(SRC_DIRS)
 	@echo $(TAR_GZ_PKGS)
 	@echo "::: Package $(NAME) build complete :::"
 	
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)
-	if test -r install_packages.sh; then \
-	  bash install_packages.sh $(ROOT)/$(PKGROOT); \
-	fi
+	( \
+	  $(COMPILERSETUP); \
+	  if test -r install_packages.sh; then \
+	    bash install_packages.sh $(ROOT)/$(PKGROOT) $(REDHAT.ROOT)/src/build-jags; \
+	  fi \
+	)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
