@@ -62,34 +62,51 @@ REDHAT.ROOT = $(CURDIR)/../../
 include Rules.mk
 include pull.mk
 
+ROLLCOMPILER = gnu
+COMPILERNAME = gnu
+
+CC = gcc
+ifeq ("$(COMPILERNAME)", "intel")
+  CC = icc
+else ifeq ("$(COMPILERNAME)", "pgi")
+  CC = pgcc
+endif
+
+COMPILERSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load $(ROLLCOMPILER) || true; \
+    module load lapack || true; \
+  fi; \
+  echo === Compiler and version ===; \
+  $(CC) --version; \
+  echo === LAPACK HOME ===; \
+  echo $${LAPACKHOME}
+
 build: $(SRC_DIRS)
 	( \
+	  $(COMPILERSETUP); \
 	  cd $(SOURCE_DIR); \
-	  module load gnu lapack; \
 	  export LD_PRELOAD=$${LAPACKHOME}/lib/libblas.so:$${LAPACKHOME}/lib/liblapack.so; \
 	  export LDFLAGS=-L$${LAPACKHOME}/lib; \
-	  ./configure --prefix=$(PKGROOT) \
-		      --with-blas=-lblas --with-lapack=-llapack; \
-	  $(MAKE); \
+	  ./configure CC=$(CC) --prefix=$(PKGROOT) \
+	              --with-blas=-lblas --with-lapack=-llapack; \
+	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 	
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
-	mkdir -p -m 755 $(PKGROOT)
-	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags
-	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags-modules
-	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
 	  cd $(SOURCE_DIR); \
-	  $(MAKE) install; \
+	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
 	)
-	umount $(PKGROOT)
+	cp -r $(CLASSIC_BUGS_SOURCE_DIR) $(ROOT)/$(PKGROOT)/examples
+	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags
 	cp -r $(ROOT)/$(PKGROOT)/* $(REDHAT.ROOT)/src/build-jags
-	-rmdir -p $(PKGROOT)
-	mv $(CLASSIC_BUGS_SOURCE_DIR) $(ROOT)/$(PKGROOT)/examples
+	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags-modules
 	cat jags.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/jags!g;s!VERSION!$(VERSION)!g" \
-         > $(REDHAT.ROOT)/src/build-jags-modules/$(NAME).module
+	  > $(REDHAT.ROOT)/src/build-jags-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
