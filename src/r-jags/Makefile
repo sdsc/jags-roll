@@ -65,6 +65,9 @@ include pull.mk
 ROLLCOMPILER = gnu
 COMPILERNAME = gnu
 
+CRAN = http://cran.stat.ucla.edu
+JAGS_CACHE = $(REDHAT.ROOT)/src/build-jags
+
 CC = gcc
 ifeq ("$(COMPILERNAME)", "intel")
   CC = icc
@@ -76,25 +79,47 @@ COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
     module load $(ROLLCOMPILER) || true; \
-    module load R || true; \
   fi; \
   echo === Compiler and version ===; \
-  $(CC) --version; \
-  echo === R HOME ===; \
-  echo $${RHOME}
+  $(CC) --version
 
-build: $(SRC_DIRS)
-	@echo $(TAR_GZ_PKGS)
+LAPACKSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load lapack || true; \
+  fi; \
+  echo === LAPACKHOME ===; \
+  echo $${LAPACKHOME}
+
+RSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load R || true; \
+  fi; \
+  echo === R version ===; \
+  R --version
+
+build:
 	@echo "::: Package $(NAME) build complete :::"
 	
 install::
-	mkdir -p $(ROOT)/$(PKGROOT)
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	-mkdir -p -m 755 $(PKGROOT)
+	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
-	  if test -r install_packages.sh; then \
-	    bash install_packages.sh $(ROOT)/$(PKGROOT) $(REDHAT.ROOT)/src/build-jags; \
-	  fi \
+	  $(LAPACKSETUP); \
+	  $(RSETUP); \
+	  export JAGS_INCLUDE=$(JAGS_CACHE)/include/JAGS; \
+	  export JAGS_LIB=$(JAGS_CACHE)/lib; \
+	  export LD_LIBRARY_PATH=$${JAGS_LIB}:$${LD_LIBRARY_PATH}; \
+	  Rscript install_package.R $(CRAN) $(PKGROOT) rjags "" \
 	)
+	umount $(PKGROOT)
+	-rmdir -p $(PKGROOT)
+	if test ! -d $(ROOT)/$(PKGROOT)/rjags; then \
+	  exit 2; \
+	fi
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
