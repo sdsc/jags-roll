@@ -76,16 +76,22 @@ COMPILERSETUP = \
   if test -e /etc/profile.d/modules.sh; then \
     . /etc/profile.d/modules.sh; \
     module load $(ROLLCOMPILER) || true; \
-    module load lapack || true; \
   fi; \
   echo === Compiler and version ===; \
-  $(CC) --version; \
-  echo === LAPACK HOME ===; \
+  $(CC) --version
+
+LAPACKSETUP = \
+  if test -e /etc/profile.d/modules.sh; then \
+    . /etc/profile.d/modules.sh; \
+    module load lapack || true; \
+  fi; \
+  echo === LAPACKHOME ===; \
   echo $${LAPACKHOME}
 
 build: $(SRC_DIRS)
 	( \
 	  $(COMPILERSETUP); \
+	  $(LAPACKSETUP); \
 	  cd $(SOURCE_DIR); \
 	  export LD_PRELOAD=$${LAPACKHOME}/lib/libblas.so:$${LAPACKHOME}/lib/liblapack.so; \
 	  export LDFLAGS=-L$${LAPACKHOME}/lib; \
