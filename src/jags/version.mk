@@ -1,21 +1,22 @@
-NAME               = jags
-VERSION            = 3.3.0
-RELEASE            = 1
-PKGROOT            = /opt/jags
-RPM.EXTRAS         = AutoReq:No
+NAME                    = jags
+VERSION                 = 3.3.0
+RELEASE                 = 1
+PKGROOT                 = /opt/jags
 
-SRC_SUBDIR         = jags
+SRC_SUBDIR              = jags
 
-SOURCE_NAME        = $(NAME)
-SOURCE_VERSION     = $(VERSION)
-SOURCE_SUFFIX      = tar.gz
-SOURCE_PKG         = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
-SOURCE_DIR         = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
+SOURCE_NAME             = jags
+SOURCE_SUFFIX           = tar.gz
+SOURCE_VERSION          = $(VERSION)
+SOURCE_PKG              = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
+SOURCE_DIR              = $(SOURCE_PKG:%.$(SOURCE_SUFFIX)=%)
 
-CLASSIC_BUGS_NAME        = classic-bugs
-CLASSIC_BUGS_VERSION     = ''
-CLASSIC_BUGS_SUFFIX      = tar.gz
-CLASSIC_BUGS_PKG         = $(CLASSIC_BUGS_NAME).$(CLASSIC_BUGS_SUFFIX)
-CLASSIC_BUGS_SOURCE_DIR  = $(CLASSIC_BUGS_PKG:%.$(CLASSIC_BUGS_SUFFIX)=%)
+CLASSIC_BUGS_NAME       = classic-bugs
+CLASSIC_BUGS_SUFFIX     = tar.gz
+CLASSIC_BUGS_VERSION    = ''
+CLASSIC_BUGS_PKG        = $(CLASSIC_BUGS_NAME).$(CLASSIC_BUGS_SUFFIX)
+CLASSIC_BUGS_SOURCE_DIR = $(CLASSIC_BUGS_PKG:%.$(CLASSIC_BUGS_SUFFIX)=%)
 
-TAR_GZ_PKGS        = $(SOURCE_PKG) $(CLASSIC_BUGS_PKG)
+TAR_GZ_PKGS             = $(SOURCE_PKG) $(CLASSIC_BUGS_PKG)
+
+RPM.EXTRAS              = AutoReq:No
