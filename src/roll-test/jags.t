@@ -17,10 +17,7 @@ my $TESTFILE = 'tmpjags';
 open(OUT, ">$TESTFILE.sh");
 print OUT <<END;
 #!/bin/bash
-if test -f /etc/profile.d/modules.sh; then
-  . /etc/profile.d/modules.sh
-  module load gnu lapack jags
-fi
+module load ROLLCOMPILER lapack jags
 mkdir $TESTFILE.dir
 cd $TESTFILE.dir
 cp /opt/jags/examples/vol2/air/* .
@@ -48,7 +45,6 @@ SKIP: {
     like($output, qr/theta\[2\] 5001 10000/, 'jags test run');
   }
 
-  skip 'modules not installed', 3 if ! -f '/etc/profile.d/modules.sh';
   `/bin/ls /opt/modulefiles/applications/jags/[0-9]* 2>&1`;
   ok($? == 0, 'jags module installed');
   `/bin/ls /opt/modulefiles/applications/jags/.version.[0-9]* 2>&1`;
@@ -63,8 +59,7 @@ SKIP: {
   ok(-d $ENV{'R_LIBS'}, 'R library created');
   open(OUTPUT, ">$TESTFILE.sh");
   print OUTPUT <<END;
-. /etc/profile.d/modules.sh
-module load gnu R
+module load ROLLCOMPILER R
 echo 'library()' | R --vanilla
 END
   $output = `/bin/bash $TESTFILE.sh 2>&1`;

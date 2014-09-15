@@ -1,5 +1,5 @@
 NAME       = r-jags
-RELEASE    = 5
+RELEASE    = 6
 PKGROOT    = /opt/R/local/lib
 
 RPM.EXTRAS = AutoReq:No

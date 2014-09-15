@@ -1,6 +1,6 @@
 NAME                    = jags
 VERSION                 = 3.3.0
-RELEASE                 = 1
+RELEASE                 = 2
 PKGROOT                 = /opt/jags
 
 SRC_SUBDIR              = jags
