@@ -67,6 +67,8 @@ COMPILERNAME = gnu
 
 CRAN = http://cran.stat.ucla.edu
 JAGS_CACHE = $(REDHAT.ROOT)/src/build-jags
+NODE_FILE = $(REDHAT.ROOT)/nodes/jags-common.xml
+R_MODULES_CACHE = $(REDHAT.ROOT)/src/build-rjags
 
 CC = gcc
 ifeq ("$(COMPILERNAME)", "intel")
@@ -93,10 +95,11 @@ RSETUP = \
 build:
 	@echo "::: Package $(NAME) build complete :::"
 	
-install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+# Use R to install rjags and any missing prerequisites into a cache dir.
+$(R_MODULES_CACHE):
+	mkdir -p -m 755 $(R_MODULES_CACHE)
 	-mkdir -p -m 755 $(PKGROOT)
-	mount --bind $(ROOT)/$(PKGROOT) $(PKGROOT)
+	mount --bind $(R_MODULES_CACHE) $(PKGROOT)
 	( \
 	  $(COMPILERSETUP); \
 	  $(LAPACKSETUP); \
@@ -108,8 +111,23 @@ install::
 	)
 	umount $(PKGROOT)
 	-rmdir -p $(PKGROOT)
-	if test ! -d $(ROOT)/$(PKGROOT)/rjags; then \
+	if test ! -d $(R_MODULES_CACHE)/rjags; then \
 	  exit 2; \
+	fi
+
+# Package rjags and each prequisite into individual rpms, using R to extract
+# the module version number.  Also have to add each rpm name to the jags roll
+# node file so that Rocks will install it.
+install:: $(R_MODULES_CACHE)
+	-mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	if test -z "$(R_MODULE)"; then \
+	  for module in `ls $(R_MODULES_CACHE)`; do \
+	    version=`module load R && export R_LIBS=$(R_MODULES_CACHE) && R -q -e "packageVersion('$${module}')" | grep ^.1 | awk -F"'" '{print $$2}'`; \
+	    $(MAKE) NAME=R-$${module} VERSION=$${version} R_MODULE=$${module} rpm; \
+	    perl -pi -e 'print $$_ and s/$(NAME)/R-'$${module}'/ if m/$(NAME)/' $(NODE_FILE); \
+	  done; \
+	else \
+	  cp -r $(R_MODULES_CACHE)/$(R_MODULE) $(ROOT)/$(PKGROOT); \
 	fi
 	@echo "::: Package $(NAME) install complete :::"
 

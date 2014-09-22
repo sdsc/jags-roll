@@ -61,12 +61,15 @@
 -include $(ROLLSROOT)/etc/Rolls.mk
 include Rolls.mk
 
-default: roll
+default:
+	cp nodes/jags-common.xml.in nodes/jags-common.xml
+	$(MAKE) roll
 
 clean::
 	rm -f _arch bootstrap.py
 
 distclean: clean
+	rm -f nodes/jags-common.xml
 	rm -fr RPMS SRPMS 
 	-rm -f build.log
 	rm -fr src/build*
