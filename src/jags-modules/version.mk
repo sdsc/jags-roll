@@ -1,5 +1,9 @@
-NAME       = jags-modules
-VERSION    = 1.0
-RELEASE    = 0
+NAME        = jags-modules
+RELEASE     = 2
+PKGROOT     = /opt/modulefiles/applications/jags
 
-RPM.EXTRAS = AutoReq:No
+VERSION_SRC = $(REDHAT.ROOT)/src/jags/version.mk
+VERSION_INC = version.inc
+include $(VERSION_INC)
+
+RPM.EXTRAS  = AutoReq:No

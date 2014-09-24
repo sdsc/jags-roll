@@ -104,9 +104,6 @@ install::
 	cp -r $(CLASSIC_BUGS_SOURCE_DIR) $(ROOT)/$(PKGROOT)/examples
 	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags
 	cp -r $(ROOT)/$(PKGROOT)/* $(REDHAT.ROOT)/src/build-jags
-	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags-modules
-	cat jags.module | perl -pi -e "s!MODULEROOT!/opt/modulefiles/applications/jags!g;s!VERSION!$(VERSION)!g" \
-	  > $(REDHAT.ROOT)/src/build-jags-modules/$(NAME).module
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::

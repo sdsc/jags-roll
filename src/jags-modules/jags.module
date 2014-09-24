@@ -1,0 +1,7 @@
+#%Module1.0
+module-whatis "jags"
+module-whatis "Version: VERSION"
+setenv JAGSHOME /opt/jags
+prepend-path PATH /opt/jags/bin
+prepend-path LD_LIBRARY_PATH /opt/jags/lib
+module load ROLLCOMPILER lapack
