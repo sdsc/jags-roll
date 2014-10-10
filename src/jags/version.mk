@@ -1,11 +1,11 @@
 NAME                    = jags
-VERSION                 = 3.3.0
-RELEASE                 = 2
+VERSION                 = 3.4.0
+RELEASE                 = 0
 PKGROOT                 = /opt/jags
 
 SRC_SUBDIR              = jags
 
-SOURCE_NAME             = jags
+SOURCE_NAME             = JAGS
 SOURCE_SUFFIX           = tar.gz
 SOURCE_VERSION          = $(VERSION)
 SOURCE_PKG              = $(SOURCE_NAME)-$(SOURCE_VERSION).$(SOURCE_SUFFIX)
