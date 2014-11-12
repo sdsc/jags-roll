@@ -60,32 +60,33 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
-ROLLCOMPILER = gnu
-COMPILERNAME = gnu
+JAGS_CACHE = $(REDHAT.ROOT)/cache/build-jags
 
-CC = gcc
-ifeq ("$(COMPILERNAME)", "intel")
-  CC = icc
-else ifeq ("$(COMPILERNAME)", "pgi")
-  CC = pgcc
-endif
+LICENSE_FILES = $(SOURCE_DIR)/COPYING
 
-COMPILERSETUP = \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
+$(NAME).spec: DESCRIPTION LICENSE
 
-LAPACKSETUP = \
-  module load lapack || true; \
-  echo === LAPACKHOME ===; \
-  echo $${LAPACKHOME}
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_LAPACK) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	if ! grep -q "GNU GENERAL PUBLIC LICENSE" $(LICENSE_FILES); then \
+	  exit 2; \
+	fi
+	echo GPL > $@
 
 build: $(SRC_DIRS)
 	( \
-	  $(COMPILERSETUP); \
-	  $(LAPACKSETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_LAPACK); \
 	  cd $(SOURCE_DIR); \
 	  export LD_PRELOAD=$${LAPACKHOME}/lib/libblas.so:$${LAPACKHOME}/lib/liblapack.so; \
 	  export LDFLAGS=-L$${LAPACKHOME}/lib; \
@@ -102,10 +103,11 @@ install::
 	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
 	)
 	cp -r $(CLASSIC_BUGS_SOURCE_DIR) $(ROOT)/$(PKGROOT)/examples
-	mkdir -p -m 755 $(REDHAT.ROOT)/src/build-jags
-	cp -r $(ROOT)/$(PKGROOT)/* $(REDHAT.ROOT)/src/build-jags
+	$(INSTALL_LICENSE_FILES)
+	mkdir -p -m 755 $(JAGS_CACHE)
+	cp -r $(ROOT)/$(PKGROOT)/* $(JAGS_CACHE)/
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SRC_DIRS)
+	rm -rf $(SRC_DIRS) DESCRIPTION LICENSE
 

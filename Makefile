@@ -61,17 +61,21 @@
 -include $(ROLLSROOT)/etc/Rolls.mk
 include Rolls.mk
 
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+
 # Make a copy of the node file into which the R-modules build will plug the
 # list of packages for rjags and any prerequisites.
 default:
 	cp nodes/jags-common.xml.in nodes/jags-common.xml
-	$(MAKE) roll
+	$(MAKE) ROLLCOMPILER="$(ROLLCOMPILER)" roll
 
 clean::
 	rm -f _arch bootstrap.py
 
 distclean: clean
 	rm -f nodes/jags-common.xml
+	rm -fr cache
 	rm -fr RPMS SRPMS 
 	-rm -f build.log
-	rm -fr src/build*

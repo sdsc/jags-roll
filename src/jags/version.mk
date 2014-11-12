@@ -1,6 +1,6 @@
-NAME                    = jags
+NAME                    = sdsc-jags
 VERSION                 = 3.4.0
-RELEASE                 = 0
+RELEASE                 = 1
 PKGROOT                 = /opt/jags
 
 SRC_SUBDIR              = jags

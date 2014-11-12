@@ -60,37 +60,34 @@ REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
-include pull.mk
-
-ROLLCOMPILER = gnu
-COMPILERNAME = gnu
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
 
 CRAN = http://cran.stat.ucla.edu
-JAGS_CACHE = $(REDHAT.ROOT)/src/build-jags
+JAGS_CACHE = $(REDHAT.ROOT)/cache/build-jags
 NODE_FILE = $(REDHAT.ROOT)/nodes/jags-common.xml
-R_MODULES_CACHE = $(REDHAT.ROOT)/src/build-rjags
 
-CC = gcc
-ifeq ("$(COMPILERNAME)", "intel")
-  CC = icc
-else ifeq ("$(COMPILERNAME)", "pgi")
-  CC = pgcc
-endif
+R_MODULES_CACHE = $(REDHAT.ROOT)/cache/build-rjags
 
-COMPILERSETUP = \
-  module load $(ROLLCOMPILER) || true; \
-  echo === Compiler and version ===; \
-  $(CC) --version
+LICENSE_FILES = $(SOURCE_DIR)/LICENSE
 
-LAPACKSETUP = \
-  module load lapack || true; \
-  echo === LAPACKHOME ===; \
-  echo $${LAPACKHOME}
+$(NAME).spec: DESCRIPTION LICENSE
 
-RSETUP = \
-  module load R || true; \
-  echo === R version ===; \
-  R --version
+DESCRIPTION:
+	$(MODULE_LOAD_CC); \
+	( \
+	  $(DESCRIBE_PKG); \
+	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_R); \
+	  $(DESCRIBE_LAPACK) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	# TODO
+	#if ! grep -q "GNU GENERAL PUBLIC LICENSE" $(SOURCE_DIR)/COPYING; then \
+	#  exit 2; \
+	#fi
+	echo GPL > $@
 
 build:
 	@echo "::: Package $(NAME) build complete :::"
@@ -98,19 +95,17 @@ build:
 # Use R to install rjags and any missing prerequisites into a cache dir.
 $(R_MODULES_CACHE):
 	mkdir -p -m 755 $(R_MODULES_CACHE)
-	-mkdir -p -m 755 $(PKGROOT)
-	mount --bind $(R_MODULES_CACHE) $(PKGROOT)
+	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
 	( \
-	  $(COMPILERSETUP); \
-	  $(LAPACKSETUP); \
-	  $(RSETUP); \
+	  $(MODULE_LOAD_CC); \
+	  $(MODULE_LOAD_R); \
+	  $(MODULE_LOAD_LAPACK); \
 	  export JAGS_INCLUDE=$(JAGS_CACHE)/include/JAGS; \
 	  export JAGS_LIB=$(JAGS_CACHE)/lib; \
 	  export LD_LIBRARY_PATH=$${JAGS_LIB}:$${LD_LIBRARY_PATH}; \
 	  Rscript install_package.R $(CRAN) $(PKGROOT) rjags "" \
 	)
-	umount $(PKGROOT)
-	-rmdir -p $(PKGROOT)
+	$(call BIND_UMOUNT, $(PKGROOT))
 	if test ! -d $(R_MODULES_CACHE)/rjags; then \
 	  exit 2; \
 	fi
@@ -123,8 +118,8 @@ install:: $(R_MODULES_CACHE)
 	if test -z "$(R_MODULE)"; then \
 	  for module in `ls $(R_MODULES_CACHE)`; do \
 	    version=`module load R && export R_LIBS=$(R_MODULES_CACHE) && R -q -e "packageVersion('$${module}')" | grep ^.1 | awk -F"'" '{print $$2}'`; \
-	    $(MAKE) NAME=R-$${module} VERSION=$${version} R_MODULE=$${module} rpm; \
-	    perl -pi -e 'print $$_ and s/$(NAME)/R-'$${module}'/ if m/$(NAME)/' $(NODE_FILE); \
+	    $(MAKE) NAME=sdsc-R-$${module} VERSION=$${version} R_MODULE=$${module} rpm; \
+	    perl -pi -e 'print $$_ and s/$(NAME)/sdsc-R-'$${module}'/ if m/$(NAME)/' $(NODE_FILE); \
 	  done; \
 	else \
 	  cp -r $(R_MODULES_CACHE)/$(R_MODULE) $(ROOT)/$(PKGROOT); \
@@ -132,3 +127,4 @@ install:: $(R_MODULES_CACHE)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
+	rm -f DESCRIPTION LICENSE
