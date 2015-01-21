@@ -63,7 +63,6 @@ include Rules.mk
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
-CRAN = http://cran.stat.ucla.edu
 JAGS_CACHE = $(REDHAT.ROOT)/cache/build-jags
 NODE_FILE = $(REDHAT.ROOT)/nodes/jags-common.xml
 
@@ -83,16 +82,16 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	# TODO
+	#TODO
 	#if ! grep -q "GNU GENERAL PUBLIC LICENSE" $(SOURCE_DIR)/COPYING; then \
 	#  exit 2; \
 	#fi
 	echo GPL > $@
 
-build:
+build: $(SRC_DIRS)
 	@echo "::: Package $(NAME) build complete :::"
-	
-# Use R to install rjags and any missing prerequisites into a cache dir.
+
+# Use R to install R modules and any missing prerequisites into a cache dir.
 $(R_MODULES_CACHE):
 	mkdir -p -m 755 $(R_MODULES_CACHE)
 	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
@@ -103,16 +102,22 @@ $(R_MODULES_CACHE):
 	  export JAGS_INCLUDE=$(JAGS_CACHE)/include/JAGS; \
 	  export JAGS_LIB=$(JAGS_CACHE)/lib; \
 	  export LD_LIBRARY_PATH=$${JAGS_LIB}:$${LD_LIBRARY_PATH}; \
-	  Rscript install_package.R $(CRAN) $(PKGROOT) rjags "" \
+	  for F in $(R_MODULES); do \
+	    opts=""; \
+	    R CMD INSTALL $$F*gz --configure-args="$$opts"; \
+	  done \
 	)
 	$(call BIND_UMOUNT, $(PKGROOT))
-	if test ! -d $(R_MODULES_CACHE)/rjags; then \
-	  exit 2; \
-	fi
+	for F in $(R_MODULES); do \
+	  if test ! -d $(R_MODULES_CACHE)/$$F; then \
+	    echo error: module $$F build failed; \
+	    exit 2; \
+	  fi; \
+	done
 
-# Package rjags and each prequisite into individual rpms, using R to extract
-# the module version number.  Also have to add each rpm name to the jags roll
-# node file so that Rocks will install it.
+# Package R modules and each prequisite into individual rpms, using R to
+# extract the module version number.  Also have to add each rpm name to the
+# roll node file so that Rocks will install it.
 install:: $(R_MODULES_CACHE)
 	-mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	if test -z "$(R_MODULE)"; then \
@@ -127,4 +132,4 @@ install:: $(R_MODULES_CACHE)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -f DESCRIPTION LICENSE
+	rm -fr DESCRIPTION LICENSE $(R_MODULES)
