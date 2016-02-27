@@ -1,6 +1,11 @@
+ifndef ROLLCOMPILER
+  ROLLCOMPILER = gnu
+endif
+COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
+
 NAME                    = sdsc-jags
 VERSION                 = 3.4.0
-RELEASE                 = 1
+RELEASE                 = 2
 PKGROOT                 = /opt/jags
 
 SRC_SUBDIR              = jags
