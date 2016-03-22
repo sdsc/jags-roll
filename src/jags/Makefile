@@ -72,6 +72,7 @@ DESCRIPTION:
 	( \
 	  $(DESCRIBE_PKG); \
 	  $(DESCRIBE_CC); \
+	  $(DESCRIBE_FC); \
 	  $(DESCRIBE_LAPACK) \
 	) > $@
 
@@ -86,7 +87,7 @@ build: $(SRC_DIRS)
 	  cd $(SOURCE_DIR); \
 	  export LD_PRELOAD=$${LAPACKHOME}/lib/libblas.so:$${LAPACKHOME}/lib/liblapack.so; \
 	  export LDFLAGS=-L$${LAPACKHOME}/lib; \
-	  ./configure CC=$(CC) --prefix=$(PKGROOT) \
+	  ./configure CC=$(CC) CXX=$(CXX) F77=$(F77) --prefix=$(PKGROOT) \
 	              --with-blas=-lblas --with-lapack=-llapack; \
 	  $(MAKE) \
 	)
@@ -95,6 +96,7 @@ build: $(SRC_DIRS)
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	( \
+	  $(MODULE_LOAD_CC); \
 	  cd $(SOURCE_DIR); \
 	  $(MAKE) prefix=$(ROOT)/$(PKGROOT) install \
 	)
