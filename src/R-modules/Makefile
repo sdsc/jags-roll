@@ -64,6 +64,7 @@ include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
 JAGS_CACHE = $(REDHAT.ROOT)/cache/build-jags
+JAGS_HOME = /opt/jags
 NODE_FILE = $(REDHAT.ROOT)/nodes/jags-common.xml
 
 R_MODULES_CACHE = $(REDHAT.ROOT)/cache/build-rjags
@@ -94,19 +95,23 @@ build: $(SRC_DIRS)
 # Use R to install R modules and any missing prerequisites into a cache dir.
 $(R_MODULES_CACHE):
 	mkdir -p -m 755 $(R_MODULES_CACHE)
+	mkdir -p -m 755 $(JAGS_HOME) || true
 	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
+	$(call BIND_MOUNT, $(JAGS_HOME), $(JAGS_CACHE))
 	( \
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_R); \
 	  $(MODULE_LOAD_LAPACK); \
-	  export JAGS_INCLUDE=$(JAGS_CACHE)/include/JAGS; \
-	  export JAGS_LIB=$(JAGS_CACHE)/lib; \
+	  export JAGS_INCLUDE=$(JAGS_HOME)/include/JAGS; \
+	  export JAGS_LIB=$(JAGS_HOME)/lib; \
 	  export LD_LIBRARY_PATH=$${JAGS_LIB}:$${LD_LIBRARY_PATH}; \
 	  for F in $(R_MODULES); do \
 	    opts=""; \
 	    R CMD INSTALL $$F*gz --configure-args="$$opts"; \
 	  done \
 	)
+	$(call BIND_UMOUNT, $(JAGS_HOME))
+	rmdir -p $(JAGS_HOME) || true
 	$(call BIND_UMOUNT, $(PKGROOT))
 	for F in $(R_MODULES); do \
 	  if test ! -d $(R_MODULES_CACHE)/$$F; then \
