@@ -59,8 +59,8 @@ SKIP: {
   $ENV{'R_LIBS'} = '/opt/R/local/lib';
   ok(-d $ENV{'R_LIBS'}, 'R library created');
   foreach my $module(@RMODULES) {
-    $output = `/bin/echo "require($module, lib.loc='/opt/R/local/lib');(.packages())" | R --vanilla 2>&1`;
-    ok($output =~ /"$module"/, "$module R module loads");
+    $output = `module load R jags; /bin/echo "require($module, lib.loc='/opt/R/local/lib');(.packages())" | R --vanilla 2>&1`;
+    like($output, qr/"$module"/, "$module R module loads");
   }
 }
 
