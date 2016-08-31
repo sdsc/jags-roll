@@ -4,8 +4,8 @@ endif
 COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 NAME                    = sdsc-jags
-VERSION                 = 3.4.0
-RELEASE                 = 3
+VERSION                 = 4.2.0
+RELEASE                 = 0
 PKGROOT                 = /opt/jags
 
 SRC_SUBDIR              = jags

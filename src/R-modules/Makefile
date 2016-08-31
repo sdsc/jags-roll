@@ -102,16 +102,15 @@ $(R_MODULES_CACHE):
 	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_R); \
 	  $(MODULE_LOAD_LAPACK); \
-	  export JAGS_INCLUDE=$(JAGS_HOME)/include/JAGS; \
-	  export JAGS_LIB=$(JAGS_HOME)/lib; \
-	  export LD_LIBRARY_PATH=$${JAGS_LIB}:$${LD_LIBRARY_PATH}; \
+	  opts=""; \
+          export LD_LIBRARY_PATH=$(JAGS_HOME)/lib:$${LD_LIBRARY_PATH}; \
+          export PKG_CONFIG_PATH=$(JAGS_HOME)/lib/pkgconfig:PKG_CONFIG_PATH; \
 	  for F in $(R_MODULES); do \
-	    opts=""; \
-	    R CMD INSTALL $$F*gz --configure-args="$$opts"; \
+	    R CMD INSTALL --no-clean-on-error $$F*gz --configure-args="$$opts"; \
 	  done \
 	)
-	$(call BIND_UMOUNT, $(JAGS_HOME))
-	rmdir -p $(JAGS_HOME) || true
+	-$(call BIND_UMOUNT, $(JAGS_HOME))
+	-rmdir -p $(JAGS_HOME) || true
 	$(call BIND_UMOUNT, $(PKGROOT))
 	for F in $(R_MODULES); do \
 	  if test ! -d $(R_MODULES_CACHE)/$$F; then \
@@ -127,7 +126,7 @@ install:: $(R_MODULES_CACHE)
 	-mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	if test -z "$(R_MODULE)"; then \
 	  for module in `ls $(R_MODULES_CACHE)`; do \
-	    version=`module load R && export R_LIBS=$(R_MODULES_CACHE) && R -q -e "packageVersion('$${module}')" | grep ^.1 | awk -F"'" '{print $$2}'`; \
+            version=`module load R && export R_LIBS=$(R_MODULES_CACHE) && R -q -e "packageVersion('$${module}')" | grep ^.1 | awk -F"'" '{print $$2}'`; \
 	    $(MAKE) NAME=sdsc-R-$${module} VERSION=$${version} R_MODULE=$${module} rpm; \
 	    perl -pi -e 'print $$_ and s/$(NAME)/sdsc-R-'$${module}'/ if m/$(NAME)/' $(NODE_FILE); \
 	  done; \
