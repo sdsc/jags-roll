@@ -104,7 +104,7 @@ $(R_MODULES_CACHE):
 	  $(MODULE_LOAD_LAPACK); \
 	  opts=""; \
           export LD_LIBRARY_PATH=$(JAGS_HOME)/lib:$${LD_LIBRARY_PATH}; \
-          export PKG_CONFIG_PATH=$(JAGS_HOME)/lib/pkgconfig:PKG_CONFIG_PATH; \
+          export PKG_CONFIG_PATH=$(JAGS_HOME)/lib/pkgconfig:$${PKG_CONFIG_PATH}; \
 	  for F in $(R_MODULES); do \
 	    R CMD INSTALL --no-clean-on-error $$F*gz --configure-args="$$opts"; \
 	  done \
