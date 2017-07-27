@@ -115,7 +115,7 @@ $(R_MODULES_CACHE):
 	)
 	-$(call BIND_UMOUNT, $(JAGS_HOME))
 	-rmdir -p $(JAGS_HOME) || true
-	$(call BIND_UMOUNT, $(PKGROOT))
+	-$(call BIND_UMOUNT, $(PKGROOT))
 	mkdir -p -m 755 $(PKGROOT)
 	mv $(R_LIB_TEMP)/* $(PKGROOT); \
 	for F in $(R_MODULES); do \
