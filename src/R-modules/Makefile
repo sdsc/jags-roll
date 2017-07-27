@@ -98,7 +98,7 @@ $(R_MODULES_CACHE):
 	mkdir -p -m 755 $(R_MODULES_CACHE)
 	mkdir -p -m 755 $(JAGS_HOME) || true
 	mkdir -p -m 755 $(R_LIB_TEMP)
-	mv $(PKGROOT)/* $(R_LIB_TEMP); \
+	mv $(PKGROOT)/* $(R_LIB_TEMP)
 	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
 	$(call BIND_MOUNT, $(JAGS_HOME), $(JAGS_CACHE))
 	( \
