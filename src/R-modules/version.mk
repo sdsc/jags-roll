@@ -1,18 +1,12 @@
 NAME          = sdsc-jags-R-modules
 VERSION       = 5
-RELEASE       = 1
+RELEASE       = 2
 PKGROOT       = /opt/R/local/lib
 
 SRC_SUBDIR    = R-modules
 
 # Ordered with dependent modules after prerequisites
-R_MODULES     = coda rjags
-
-CODA_NAME     = coda
-CODA_SUFFIX   = tar.gz
-CODA_VERSION  = 0.18-1
-CODA_PKG      = $(CODA_NAME)_$(CODA_VERSION).$(CODA_SUFFIX)
-CODA_DIR      = $(CODA_NAME)
+R_MODULES     = rjags
 
 RJAGS_NAME    = rjags
 RJAGS_SUFFIX  = tar.gz

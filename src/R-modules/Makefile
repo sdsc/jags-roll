@@ -68,6 +68,7 @@ JAGS_HOME = /opt/jags
 NODE_FILE = $(REDHAT.ROOT)/nodes/jags-common.xml
 
 R_MODULES_CACHE = $(REDHAT.ROOT)/cache/build-rjags
+R_LIB_TEMP = $(REDHAT.ROOT)/cache/r_lib
 
 LICENSE_FILES = $(SOURCE_DIR)/LICENSE
 
@@ -96,6 +97,8 @@ build: $(SRC_DIRS)
 $(R_MODULES_CACHE):
 	mkdir -p -m 755 $(R_MODULES_CACHE)
 	mkdir -p -m 755 $(JAGS_HOME) || true
+	mkdir -p -m 755 $(R_LIB_TEMP)
+	mv $(PKGROOT)/* $(R_LIB_TEMP)
 	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
 	$(call BIND_MOUNT, $(JAGS_HOME), $(JAGS_CACHE))
 	( \
@@ -104,6 +107,7 @@ $(R_MODULES_CACHE):
 	  $(MODULE_LOAD_LAPACK); \
 	  opts=""; \
           export LD_LIBRARY_PATH=$(JAGS_HOME)/lib:$${LD_LIBRARY_PATH}; \
+          export R_LIBS=$${R_LIBS}:$(R_LIB_TEMP); \
           export PKG_CONFIG_PATH=$(JAGS_HOME)/lib/pkgconfig:$${PKG_CONFIG_PATH}; \
 	  for F in $(R_MODULES); do \
 	    R CMD INSTALL --no-clean-on-error $$F*gz --configure-args="$$opts"; \
@@ -111,7 +115,9 @@ $(R_MODULES_CACHE):
 	)
 	-$(call BIND_UMOUNT, $(JAGS_HOME))
 	-rmdir -p $(JAGS_HOME) || true
-	$(call BIND_UMOUNT, $(PKGROOT))
+	-$(call BIND_UMOUNT, $(PKGROOT))
+	mkdir -p -m 755 $(PKGROOT)
+	mv $(R_LIB_TEMP)/* $(PKGROOT); \
 	for F in $(R_MODULES); do \
 	  if test ! -d $(R_MODULES_CACHE)/$$F; then \
 	    echo error: module $$F build failed; \

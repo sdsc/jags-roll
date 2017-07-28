@@ -35,6 +35,8 @@ modulefile provided by the SDSC math-roll is available.  It will build without
 the modulefile as long as the environment variables it provides are otherwise
 defined.
 
+The build assumes that the R codo module is available to R. The
+SDSC r-modules-roll installs this along with a variety of other R packages.
 
 ## Building
 
