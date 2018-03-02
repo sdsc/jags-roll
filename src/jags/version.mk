@@ -5,7 +5,7 @@ COMPILERNAME := $(firstword $(subst /, ,$(ROLLCOMPILER)))
 
 NAME                    = sdsc-jags
 VERSION                 = 4.2.0
-RELEASE                 = 0
+RELEASE                 = 1
 PKGROOT                 = /opt/jags
 
 SRC_SUBDIR              = jags
@@ -24,4 +24,5 @@ CLASSIC_BUGS_SOURCE_DIR = $(CLASSIC_BUGS_PKG:%.$(CLASSIC_BUGS_SUFFIX)=%)
 
 TAR_GZ_PKGS             = $(SOURCE_PKG) $(CLASSIC_BUGS_PKG)
 
-RPM.EXTRAS              = AutoReq:No
+RPM.EXTRAS              = AutoReq:No\nAutoProv:No
+RPM.PREFIX              = $(PKGROOT)

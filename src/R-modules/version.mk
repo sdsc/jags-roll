@@ -1,6 +1,6 @@
 NAME          = sdsc-jags-R-modules
 VERSION       = 5
-RELEASE       = 2
+RELEASE       = 3
 PKGROOT       = /opt/R/local/lib
 
 SRC_SUBDIR    = R-modules
@@ -16,4 +16,5 @@ RJAGS_DIR     = $(RJAGS_NAME)
 
 TAR_GZ_PKGS   = $(CODA_PKG) $(RJAGS_PKG)
 
-RPM.EXTRAS    = AutoReq:No
+RPM.EXTRAS    = AutoReq:No\nAutoProv:No
+RPM.PREFIX    = $(PKGROOT)
