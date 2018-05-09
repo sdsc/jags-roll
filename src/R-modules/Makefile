@@ -67,8 +67,6 @@ JAGS_HOME = /opt/jags
 NODE_FILE = $(REDHAT.ROOT)/nodes/jags-common.xml
 
 R_MODULES_CACHE = $(REDHAT.ROOT)/cache/build-rjags
-R_LIB_TEMP = $(REDHAT.ROOT)/cache/r_lib
-
 LICENSE_FILES = $(SOURCE_DIR)/LICENSE
 
 $(NAME).spec: DESCRIPTION LICENSE
@@ -93,26 +91,28 @@ build: $(SRC_DIRS)
 	@echo "::: Package $(NAME) build complete :::"
 
 # Use R to install R modules and any missing prerequisites into a cache dir.
+# NOTE: export of CC/CFLAGS forces package configure to use same CC/CFLAGS
+# that R uses.
 $(R_MODULES_CACHE):
-	mkdir -p -m 755 $(R_MODULES_CACHE)
 	mkdir -p -m 755 $(JAGS_HOME) || true
-	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
 	$(call BIND_MOUNT, $(JAGS_HOME), $(JAGS_CACHE))
+	mkdir -p -m 755 $(R_MODULES_CACHE)
+	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
 	( \
-	  $(MODULE_LOAD_CC); \
 	  $(MODULE_LOAD_R); \
 	  $(MODULE_LOAD_LAPACK); \
-	  opts=""; \
-          export LD_LIBRARY_PATH=$(JAGS_HOME)/lib:$${LD_LIBRARY_PATH}; \
-          export R_LIBS=$${R_LIBS}:$(R_LIB_TEMP); \
-          export PKG_CONFIG_PATH=$(JAGS_HOME)/lib/pkgconfig:$${PKG_CONFIG_PATH}; \
+	  export LD_LIBRARY_PATH=$(JAGS_HOME)/lib:$${LD_LIBRARY_PATH}; \
+	  export PKG_CONFIG_PATH=$(JAGS_HOME)/lib/pkgconfig:$${PKG_CONFIG_PATH}; \
+	  export CC=`R CMD config CC`; \
+	  export CFLAGS=`R CMD config CFLAGS`; \
 	  for F in $(R_MODULES); do \
+	    opts=""; \
 	    R CMD INSTALL --no-clean-on-error $$F*gz --configure-args="$$opts"; \
 	  done \
 	)
-	-$(call BIND_UMOUNT, $(JAGS_HOME))
-	-rmdir -p $(JAGS_HOME) || true
-	-$(call BIND_UMOUNT, $(PKGROOT))
+	$(call BIND_UMOUNT, $(JAGS_HOME))
+	rmdir -p $(JAGS_HOME) || true
+	$(call BIND_UMOUNT, $(PKGROOT))
 	for F in $(R_MODULES); do \
 	  if test ! -d $(R_MODULES_CACHE)/$$F; then \
 	    echo error: module $$F build failed; \
