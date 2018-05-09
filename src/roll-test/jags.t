@@ -9,7 +9,7 @@ use Test::More qw(no_plan);
 my $appliance = $#ARGV >= 0 ? $ARGV[0] :
                 -d '/export/rocks/install' ? 'Frontend' : 'Compute';
 my $installedOnAppliancesPattern = '.';
-my @RMODULES = ('coda', 'rjags');
+my @RMODULES = ('rjags');
 my $isInstalled = -d '/opt/jags';
 my $output;
 
