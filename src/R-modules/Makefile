@@ -96,8 +96,6 @@ build: $(SRC_DIRS)
 $(R_MODULES_CACHE):
 	mkdir -p -m 755 $(R_MODULES_CACHE)
 	mkdir -p -m 755 $(JAGS_HOME) || true
-	mkdir -p -m 755 $(R_LIB_TEMP)
-	mv $(PKGROOT)/* $(R_LIB_TEMP)
 	$(call BIND_MOUNT, $(PKGROOT), $(R_MODULES_CACHE))
 	$(call BIND_MOUNT, $(JAGS_HOME), $(JAGS_CACHE))
 	( \
@@ -115,8 +113,6 @@ $(R_MODULES_CACHE):
 	-$(call BIND_UMOUNT, $(JAGS_HOME))
 	-rmdir -p $(JAGS_HOME) || true
 	-$(call BIND_UMOUNT, $(PKGROOT))
-	mkdir -p -m 755 $(PKGROOT)
-	mv $(R_LIB_TEMP)/* $(PKGROOT); \
 	for F in $(R_MODULES); do \
 	  if test ! -d $(R_MODULES_CACHE)/$$F; then \
 	    echo error: module $$F build failed; \
