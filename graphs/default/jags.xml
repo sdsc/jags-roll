@@ -3,8 +3,8 @@
 <graph>
 
 <description>
-jags Just Another Gibbs Sampler
-http://mcmc-jags.sourceforge.net
+jags Just Another Gibbs Sampler - http://mcmc-jags.sourceforge.net
+rjags R package - https://cran.r-project.org/web/packages/rjags/index.html
 </description>
 
 <copyright>
