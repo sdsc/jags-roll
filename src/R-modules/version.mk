@@ -1,6 +1,6 @@
 NAME          = sdsc-jags-R-modules
 VERSION       = 5
-RELEASE       = 4
+RELEASE       = 5
 PKGROOT       = /opt/R/local/lib
 
 SRC_SUBDIR    = R-modules

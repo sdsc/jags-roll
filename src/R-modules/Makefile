@@ -69,6 +69,11 @@ NODE_FILE = $(REDHAT.ROOT)/nodes/jags-common.xml
 R_MODULES_CACHE = $(REDHAT.ROOT)/cache/build-rjags
 LICENSE_FILES = $(SOURCE_DIR)/LICENSE
 
+# The Intel compilers use the C++ libraries that are packaged with the first
+# gnu compiler found in PATH. Since the default system gnu doesn't support
+# C++11, for Intel we have to load /opt/gnu to get the updated library.
+MODULE_LOAD_CXX11_LIB = $(call MODULE_LOAD_COMPILER, gnu, gcc)
+
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -105,6 +110,9 @@ $(R_MODULES_CACHE):
 	  export PKG_CONFIG_PATH=$(JAGS_HOME)/lib/pkgconfig:$${PKG_CONFIG_PATH}; \
 	  export CC=`R CMD config CC`; \
 	  export CFLAGS=`R CMD config CFLAGS`; \
+	  if [[ $$CC =~ icc ]]; then \
+	    $(MODULE_LOAD_CXX11_LIB); \
+	  fi; \
 	  for F in $(R_MODULES); do \
 	    opts=""; \
 	    R CMD INSTALL --no-clean-on-error $$F*gz --configure-args="$$opts"; \
